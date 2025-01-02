@@ -1,6 +1,9 @@
 # QR PDF
 Generate a QR Code from text, place it over a PDF file and save the new PDF file.
 
+## Demo
+https://mariusmutu.github.io/qrpdf/
+
 ## Instalation
 Copy index.html, script.js (_generator.html and generator.js are optional_)
 
