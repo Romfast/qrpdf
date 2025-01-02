@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generează Cod QR și adaugă la PDF</title>
+
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- QR Code generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- jsPDF pentru crearea PDF-ului final -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <!-- Interact.js pentru drag & drop -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.17/interact.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .main-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .size-info {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button.secondary {
+            background-color: #666;
+        }
+
+        button.generator {
+            background-color: #666;
+            margin-top: 10px;
+        }
+
+        .preview-section {
+            margin-top: 20px;
+        }
+
+        .preview-container {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            padding: 20px;
+            min-height: 400px;
+            margin-top: 20px;
+        }
+
+        #pdfPreview {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .qr-preview {
+            position: absolute;
+            cursor: move;
+            touch-action: none;
+            background-color: rgba(76, 175, 80, 0.2);
+            border: 3px solid #4CAF50;
+            z-index: 1000;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+		
+		@media screen and (max-width: 768px) {
+			body {
+				padding: 10px;
+				margin: 10px;
+			}
+
+			.main-container {
+				padding: 15px;
+			}
+
+			h1 {
+				font-size: 20px;
+				margin-bottom: 20px;
+			}
+
+			.form-group {
+				margin-bottom: 15px;
+			}
+
+			/* Ajustare layout pentru input și buton generator */
+			div[style*="display: flex"] {
+				flex-direction: column;
+				gap: 5px;
+			}
+
+			button {
+				width: 100% !important;
+				margin-top: 5px;
+			}
+
+			/* Ajustare pentru preview container */
+			.preview-container {
+				padding: 10px;
+				min-height: 300px;
+			}
+
+			/* Ajustare pentru butoanele din preview section */
+			.preview-section button {
+				padding: 12px;
+				font-size: 14px;
+			}
+
+			/* Ajustare pentru selects și inputs */
+			select, input {
+				font-size: 16px; /* Previne zoom pe iOS */
+				padding: 10px;
+			}
+
+			/* Info text mai mic pe mobile */
+			.size-info {
+				font-size: 11px;
+			}
+		}
+
+		@media screen and (max-width: 480px) {
+			h1 {
+				font-size: 18px;
+			}
+
+			.main-container {
+				padding: 10px;
+			}
+
+			/* Ajustări pentru spațiere mai mică pe ecrane foarte mici */
+			.form-group {
+				margin-bottom: 10px;
+			}
+
+			label {
+				font-size: 14px;
+			}
+
+			.preview-container {
+				min-height: 250px;
+				margin-top: 10px;
+			}
+		}
+
+		/* Îmbunătățiri pentru touch devices */
+		@media (hover: none) {
+			button:hover {
+				opacity: 1;
+			}
+
+			.qr-preview {
+				touch-action: none;
+				-webkit-user-select: none;
+				user-select: none;
+			}
+
+			button {
+				min-height: 44px; /* Pentru accesibilitate touch */
+			}
+		}
+		
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <h1>Generează Cod QR și adaugă la PDF</h1>
+        
+        <div class="form-group">
+            <label>Selectează PDF:</label>
+            <input type="file" id="pdfFile" accept="application/pdf">
+        </div>
+
+        <div class="form-group">
+            <label>Date pentru Cod QR:</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="qrData" placeholder="Introduceți datele pentru codul QR">
+                <button onclick="window.open('generator.html', '_blank')" 
+                        style="width: auto;" 
+                        class="secondary">
+                    Generator Date
+                </button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Dimensiune cod QR:</label>
+            <select id="qrSize">
+                <option value="100">Small (100x100 px)</option>
+                <option value="125">Medium (125x125 px)</option>
+                <option value="150" selected>Large (150x150 px)</option>
+                <option value="200">Extra Large (200x200 px)</option>
+            </select>
+            <div class="size-info">Dimensiune în puncte (1 punct ≈ 0.0139 inches sau 0.3528 mm)</div>
+        </div>
+
+        <div class="form-group">
+            <label>Nivel de corecție a erorilor:</label>
+            <select id="errorCorrection">
+                <option value="L">Low (7%)</option>
+                <option value="M">Medium (15%)</option>
+                <option value="Q">Quarter (25%)</option>
+                <option value="H">High (30%)</option>
+            </select>
+            <div class="size-info">Nivelurile mai mari de corecție a erorilor cresc densitatea codului QR, dar este mai sigur la citire.</div>
+        </div>
+
+        <button onclick="handlePreview()">Încarcă și Previzualizează</button>
+
+        <div id="previewSection" class="preview-section hidden">
+            <div class="preview-container">
+                <canvas id="pdfPreview"></canvas>
+                <div id="qrPreview" class="qr-preview"></div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="processPDF()">Procesează PDF</button>
+                <button onclick="resetForm()" class="secondary">Start Over</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./script.js" defer></script>
+</body>
+</html>

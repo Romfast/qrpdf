@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.17/interact.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <title>Generator Date panouri fotovoltaice Casa Verde</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .main-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .panel-container {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            background: #f9f9f9;
+        }
+
+        .panel-series {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .btn-add {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-remove {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+		
+		.form-group input:invalid,
+		.form-group select:invalid,
+		.panel-input:invalid {
+			border-color: #dc3545;
+			background-color: #fff8f8;
+		}
+
+		.form-group.error input,
+		.form-group.error select,
+		.panel-series.error input {
+			border: 2px solid #dc3545;
+			background-color: #fff8f8;
+		}
+
+		.error-message {
+			color: #dc3545;
+			font-size: 12px;
+			margin-top: 4px;
+			display: none;
+		}
+
+		.form-group.error .error-message {
+			display: block;
+		}
+
+		/* Indicator pentru câmpuri obligatorii */
+		.required-field::after {
+			content: ' *';
+			color: #dc3545;
+		}		
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <h1>Generator Date panouri fotovoltaice Casa Verde</h1>
+        
+        <form id="qrDataForm">
+            <div style="display: flex; gap: 20px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Tip solicitant:</label>
+                    <select id="tipSolicitant" required>
+                        <option value="1">1 - pentru persoanele fizice</option>
+                        <option value="2">2 - pentru unitățile de cult</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Număr factură:</label>
+                    <input type="text" id="numarFactura" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Dată factură:</label>
+                <input type="date" id="dataFactura" required>
+            </div>
+
+            <div style="display: flex; gap: 20px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Județ:</label>
+                    <input type="text" id="judet" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Comuna/oraș:</label>
+                    <input type="text" id="comuna" required>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 20px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Sector/sat:</label>
+                    <input type="text" id="sector" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Stradă:</label>
+                    <input type="text" id="strada" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Număr:</label>
+                    <input type="text" id="numarStrada" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Nume prenume/Denumire unitate de cult:</label>
+                <input type="text" id="numePrenume" required>
+            </div>
+
+            <div class="form-group">
+                <label>CNP/CIF:</label>
+                <input type="text" id="cnpCif" required>
+            </div>
+
+            <div class="form-group">
+                <label>Putere instalată:</label>
+                <input type="text" id="putereInstalata" pattern="^\d+,\d{2}$" placeholder="Ex: 12,50" required>
+                <div class="note">Folosiți virgula ca separator zecimal și două zecimale</div>
+            </div>
+
+            <div class="form-group">
+                <label>Serie invertor:</label>
+                <input type="text" id="serieInvertor" required>
+            </div>
+
+            <div class="form-group">
+                <label>Indicator panou:</label>
+                <input type="text" id="indicatorPanou" value="START_PANOU" readonly>
+            </div>
+
+            <div class="panel-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="font-weight: bold;">Serii panouri fotovoltaice</div>
+                    <button type="button" class="btn-add" onclick="addPanel()">Adaugă panou</button>
+                </div>
+                <div id="panouriContainer"></div>
+                <div class="note">Minimum 2 panouri sunt obligatorii</div>
+            </div>
+
+            <button type="button" onclick="generateQRText()">Generează text pentru QR</button>
+        </form>
+    </div>
+
+    <script src="./generator.js" defer></script>
+</body>
+</html>
