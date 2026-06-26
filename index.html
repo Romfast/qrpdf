@@ -225,12 +225,52 @@
 				min-height: 44px; /* Pentru accesibilitate touch */
 			}
 		}
-		
+                /* ===== Romfast branding kit (header + footer) — comun tuturor aplicațiilor ===== */
+        .rf-header {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          padding: 14px 4px;
+          margin-bottom: 20px;
+          border-bottom: 1px solid #e5e7eb;
+        }
+        .rf-header-brand { display: inline-flex; align-items: center; flex-shrink: 0; }
+        .rf-header-logo { height: 46px; width: auto; display: block; }
+        .rf-header-titles { min-width: 0; text-align: left; }
+        .rf-header-title { margin: 0; padding: 0; font-size: 20px; font-weight: 700; line-height: 1.2; color: #1f2937; letter-spacing: -0.01em; }
+        .rf-header-sub { margin-top: 2px; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #9ca3af; }
+        .rf-footer {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: center;
+          gap: 8px 18px;
+          margin-top: 32px;
+          padding: 16px 4px;
+          border-top: 1px solid #e5e7eb;
+          font-size: 13px;
+          color: #6b7280;
+          text-align: center;
+        }
+        .rf-footer-link { display: inline-flex; align-items: center; }
+        .rf-footer-logo { height: 22px; width: auto; display: block; opacity: 0.9; transition: opacity 0.2s ease; }
+        .rf-footer-link:hover .rf-footer-logo { opacity: 1; }
+        .rf-footer a { color: #6b7280; text-decoration: none; }
+        .rf-footer a:hover { color: #111827; text-decoration: underline; }
+
     </style>
 </head>
 <body>
+    <header class="rf-header">
+        <a class="rf-header-brand" href="https://romfast.ro" target="_blank" rel="noopener" title="romfast.ro — toate aplicațiile">
+            <img class="rf-header-logo" src="assets/romfast_logo.png" alt="Romfast">
+        </a>
+        <div class="rf-header-titles">
+            <h1 class="rf-header-title">Generează Cod QR și adaugă la PDF</h1>
+            <div class="rf-header-sub">Romfast SRL</div>
+        </div>
+    </header>
     <div class="main-container">
-        <h1>Generează Cod QR și adaugă la PDF</h1>
         
         <div class="form-group">
             <label>Selectează PDF:</label>
@@ -284,6 +324,14 @@
             </div>
         </div>
     </div>
+
+    <footer class="rf-footer">
+        <a class="rf-footer-link" href="https://romfast.ro" target="_blank" rel="noopener" title="romfast.ro">
+            <img class="rf-footer-logo" src="assets/romfast_logo.png" alt="Romfast">
+        </a>
+        <span>© Romfast SRL</span>
+        <a href="https://romfast.ro/menu/aplicatii-online.html" target="_blank" rel="noopener">Aplicații online</a>
+    </footer>
 
     <script src="./script.js" defer></script>
 </body>
